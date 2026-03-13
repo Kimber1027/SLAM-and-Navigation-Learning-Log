@@ -1,8 +1,8 @@
 # 🧭 SLAM & Navigation Learning Log
 # SLAM与导航学习记录
 
-> 记录我在 SLAM、惯性导航等方向的学习过程。  
-> A structured learning log covering SLAM, inertial navigation etc.
+记录我在 SLAM、惯性导航等方向的学习历程。  
+*A structured learning log covering SLAM, inertial navigation etc.*
 
 ---
 
@@ -27,6 +27,8 @@
 - [05 · 惯性器件理论输出](./01-courses/whu-inertial-navigation/05-惯性器件理论输出.md)        🔜即将更新
 - [06 · IMU 误差分类](./01-courses/whu-inertial-navigation/06-IMU误差分类.md)               🔜即将更新
 - [07 · IMU 误差模型](./01-courses/whu-inertial-navigation/07-IMU误差模型.md)               
+
+持续更新中...
 
 ---
 
