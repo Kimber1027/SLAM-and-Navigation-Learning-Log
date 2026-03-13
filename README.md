@@ -20,13 +20,13 @@
 ## 📖 课程笔记 Courses
 
 ### 武汉大学 · 惯性导航原理
-- [01 · 课程要求与导航简介](./01-courses/whu-inertial-navigation/01-课程要求与导航简介.md)
-- [02 · 惯性传感器](./01-courses/whu-inertial-navigation/02-惯性传感器.md)
-- [03 · INS 系统概述](./01-courses/whu-inertial-navigation/03-INS系统概述.md)
-- [04 · INS 特性等级历史](./01-courses/whu-inertial-navigation/04-INS特性等级历史.md)
-- [05 · 惯性器件理论输出](./01-courses/whu-inertial-navigation/05-惯性器件理论输出.md)
-- [06 · IMU 误差分类](./01-courses/whu-inertial-navigation/06-IMU误差分类.md)
-- [07 · IMU 误差模型](./01-courses/whu-inertial-navigation/07-IMU误差模型.md)
+- [01 · 课程要求与导航简介](./01-courses/whu-inertial-navigation/01-课程要求与导航简介.md)     📌即将更新
+- [02 · 惯性传感器](./01-courses/whu-inertial-navigation/02-惯性传感器.md)                   📌即将更新
+- [03 · INS 系统概述](./01-courses/whu-inertial-navigation/03-INS系统概述.md)               📌即将更新
+- [04 · INS 特性等级历史](./01-courses/whu-inertial-navigation/04-INS特性等级历史.md)        📌即将更新
+- [05 · 惯性器件理论输出](./01-courses/whu-inertial-navigation/05-惯性器件理论输出.md)        📌即将更新
+- [06 · IMU 误差分类](./01-courses/whu-inertial-navigation/06-IMU误差分类.md)               📌即将更新
+- [07 · IMU 误差模型](./01-courses/whu-inertial-navigation/07-IMU误差模型.md)               📌即将更新
 
 ---
 
