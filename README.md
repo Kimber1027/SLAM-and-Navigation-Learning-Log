@@ -36,7 +36,7 @@
 
 | 年份   | 论文                                                   | 方向   | 笔记                                                       | 状态     |
 | ---- | ---------------------------------------------------- | ---- | -------------------------------------------------------- | ------ |
-| 2020 | RoNIN: Robust Neural Inertial Navigation in the Wild | 惯性导航 | [📝 阅读笔记](./02-papers/inertial-navigation/2020-ronin.md) | 🔜即将更新 |
+| 2020 | RoNIN: Robust Neural Inertial Navigation in the Wild | 惯性导航 | [📝 阅读笔记](./02-papers/inertial-navigation/2020-ronin.md) | 🚧 阅读中 |
 
 ---
 
