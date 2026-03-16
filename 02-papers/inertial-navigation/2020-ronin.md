@@ -6,7 +6,7 @@
 | **作者**     | Sachini Herath, Hang Yan, Yasutaka Furukawa                                                                                                                                               |
 | **发表会议**   | ICRA 2020                                                                                                                                                                                 |
 | **论文链接**   | [RoNIN: Robust Neural Inertial Navigation in the Wild: Benchmark, Evaluations, & New Methods \| IEEE Conference Publication \| IEEE Xplore](https://ieeexplore.ieee.org/document/9196860) |
-| **代码与数据集** | [Sachini/ronin: RoNIN: Robust Neural Inertial Navigation in the Wild](https://github.com/Sachini/ronin) [http://ronin.cs.sfu.ca](http://ronin.cs.sfu.ca)                                  |
+| **代码与数据集** | [Sachini/ronin: RoNIN: Robust Neural Inertial Navigation in the Wild](https://github.com/Sachini/ronin) <br><br>[http://ronin.cs.sfu.ca](http://ronin.cs.sfu.ca)                          |
 | **阅读日期**   | 2026-03-15                                                                                                                                                                                |
 | **阅读状态**   | 🚧 精读中                                                                                                                                                                                    |
 
@@ -54,7 +54,7 @@
 | OXIOD         | IMU + Vicon 动捕          | 5       | 14.7     | 手持、口袋、背包、小车 |
 | **RoNIN（本文）** | **IMU 设备 + 独立 3D 追踪设备** | **100** | **42.7** | **无限制**     |
 
-**现有数据集的根本缺陷**：使用单一设备同时采集 IMU 数据与真实轨迹，要求手机始终保持视觉可见，无法支持自然的手机携带场景。
+**现有数据集的缺陷**：使用单一设备同时采集 IMU 数据与真实轨迹，要求手机始终保持视觉可见，无法支持自然的手机携带场景。
 
 #### 1.3 本文核心贡献
 
@@ -75,13 +75,14 @@
 
 该协议带来**两个重要变化**：
 - 因为位置真值只来自固定在身体上的追踪设备，所以**学习目标从手机轨迹变成人体轨迹**。
-- **引入了新的任务——body heading estimation（身体朝向估计）。** *作者认为，人体朝向比设备朝向更有意义，但也更具挑战性，因为**device orientation** （手机本身的朝向）与 **body heading** （人的身体朝向）会因为手机携带方式不同而产生偏差。文中将固定在身体上的 tracking phone 的 heading 视为人体 heading 的近似真值，并补偿由于背带安装不完全对齐带来的常数偏移。*
+- **引入了新的任务——body heading estimation（身体朝向估计）。** 
+
+*作者认为，人体朝向比设备朝向更有意义，但也更具挑战性，因为**device orientation** （手机本身的朝向）与 **body heading** （人的身体朝向）会因为手机携带方式不同而产生偏差。文中将固定在身体上的 tracking phone 的 heading 视为人体 heading 的近似真值，并补偿由于背带安装不完全对齐带来的常数偏移。*
 
 随后为了证明 RoNIN 数据集的真值质量足够高，作者给出轨迹漂移、朝向误差和采样频率等量化指标。
 
 85% 的受试者数据用于训练/验证/测试（seen），15% 用于测试模型对未见受试者的泛化能力（unseen）。
 
----
 
 #### 2.2 鲁棒神经惯性导航（RONIN）
 ##### 2.2.1 RoNIN的目标
@@ -93,27 +94,40 @@
 
 ##### 2.2.2 RoNIN的两个设计原则
 - 原则1：Coordinate frame normalization（坐标系归一化）👉把坐标系变稳定（详见2.3）
-- 原则2：Robust velocity losses（鲁棒速度损失）👉把监督信号变稳健（详见2.4）
+- 原则2：Robust velocity losses（鲁棒速度损失）👉把监督信号变稳健（详见2.5）
 
-***RoNIN的核心贡献不是某个特定神经网络，而是上述两条可迁移的方法原则；接下来作者把这两条原则分别应用到 ResNet、LSTM、TCN上，来说明它们具有通用性。***
+***RoNIN的核心贡献不是某个特定神经网络，而是上述两条可迁移的方法原则；接下来作者会把这两条原则分别应用到 ResNet、LSTM、TCN上，来说明它们具有通用性。***
 
----
+
 #### 2.3 坐标系归一化
-IMU 测到的加速度、角速度，都是基于**手机自己的坐标系**，实际情况下这个坐标系会随着手机姿态的改变二改变，网络不仅要学习人的运动模式，还要学习手机的姿态，这样就给网络学习带来了不必要的麻烦。
+**挑战：** 原始IMU测量位于不断变化的设备坐标系中，而真值轨迹位于全局坐标系中；如果直接在手机坐标系里学习，同样的人体运动会因持机方式不同而表现为不同数值。
 
-由于整个运动过程中手机自身坐标系不断变化，需要一个更稳定的参考系。RoNIN 用重力方向来固定坐标系的竖直轴（Z 轴），并构造一个对水平朝向不敏感的 HACF，从而减少不同持机姿态带来的表示差异。
+**解决方案：** ***坐标系归一化。*** RoNIN 将IMU输入与输出运动量统一表示到 ***HACF（heading-agnostic coordinate frame）*** 中。HACF 只要求 Z 轴与重力方向对齐，水平面方向可以任意但需在整段序列中保持一致。
 
-Q：为什么水平面随便转模型仍然能学？
-A：因为水平面整体旋转只会改变表示方式，不会改变运动本身。只要输入 IMU 和输出标签在同一段序列中使用同一个水平参考方向，网络就能学到稳定的映射，所以水平面可以随便转。
+**与其他工作对比：** RIDI的做法是每一帧都把 Y 轴对齐到重力方向，一旦手机姿态比较极端，这一步对齐就会出现 singularity / ambiguity（奇异性 / 歧义）
 
-🌰举个例子
-
-> [!example] 
-> 假设一个人从 A 点沿直线走到 B 点。该运动的物理过程本身不会因为坐标系选择而改变，但其二维向量表示会随平面坐标轴的旋转而改变。例如，在东-北坐标系下，该运动可表示为 (1,0)；若将整个坐标系顺时针旋转 90°，同一运动可写为 (0,1)。因此，变化的只是坐标表示，而不是运动本身。
+> [!question]
+> **个人疑问1：为什么水平面随便转模型仍然能学？**
+> 思考：因为水平面整体旋转只会改变表示方式，不会改变运动本身。网络学习的是IMU 模式与运动之间的映射关系，而不是某个固定的绝对朝向标签。只要输入 IMU 和输出标签在同一段序列中使用同一个水平参考方向，网络就能学到稳定的映射，所以水平面可以随便转。
 > 
-> **RoNIN 的关键思想是：不要求水平面必须对应唯一的绝对方向，只要求输入 IMU 和输出标签在同一个一致的参考系中表示。网络学习的是IMU 模式与运动之间的映射关系，而不是某个固定的绝对朝向标签。**
+> **个人疑问2：singularity / ambiguity（奇异性 / 歧义）是指什么？**
+> 当前信息不足以唯一决定一个结果；某些特殊姿态下，坐标变换会变得不稳定、不可唯一、或者对微小噪声特别敏感。
+>
+> **个人疑问3： RoNIN的做法是让Z轴和重力方向对齐，RIDI是让Y轴方向和重力对齐，而坐标轴不是人为指定的吗？这样看他俩本质上不是一模一样吗？为啥RoNIN就比RIDI好？**
+> 思考：查阅RIDI文献（[RIDI: Robust IMU Double Integration](https://openaccess.thecvf.com/content_ECCV_2018/papers/Hang_Yan_RIDI_Robust_IMU_ECCV_2018_paper.pdf)）得知，RIDI先构造一个 stabilized-IMU frame S。用系统给的重力方向，把设备坐标系里的 y 轴对齐重力，从而消掉pitch和roll，然后在这个S里回归二维水平速度。而RoNIN 定义的HACF更加“宽松”，不是去构造一个特定的稳定坐标系，只要求任何一个 z 轴与重力对齐的坐标系、整段序列保持一致即可。
+> 
 
----
+
+#### 2.4 三种骨干架构
+![](02-papers/image/2020-ronin.png)
+
+把图从下往上看成 4 层：
+1. **最底层：IMU in local CF**。即原始 IMU 数据，也就是手机本地坐标系里的加速度和角速度。
+2. **第二层：粉色圆圈CF Normalization**。RoNIN 先把原始 IMU 信号变换到一个更稳定的坐标系 HACF 里。
+3. **第三层：绿色网络模块。** 三种不同 backbone，左ResNet、中LSTM、右TCN，从归一化后的 IMU 序列里提取时序特征。
+4. **最上层：输出 + loss + integration。** 二维量表示水平面的运动向量/速度信息；然后通过积分层，把这些局部输出累积成位移，用来约束训练或生成轨迹。
+
+
 *未完待续...
-最后更新：2026-03-15*
+最后更新：2026-03-16 22:31*
 
